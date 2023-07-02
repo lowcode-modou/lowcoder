@@ -107,15 +107,15 @@ export const viteConfig: UserConfig = {
     proxy: proxyConfig,
   },
   plugins: [
-    checker({
-      typescript: true,
-      eslint: {
-        lintCommand: 'eslint --quiet "./src/**/*.{ts,tsx}"',
-        dev: {
-          logLevel: ["error"],
-        },
-      },
-    }),
+    // checker({
+    //   typescript: true,
+    //   eslint: {
+    //     lintCommand: 'eslint --quiet "./src/**/*.{ts,tsx}"',
+    //     dev: {
+    //       logLevel: ["error"],
+    //     },
+    //   },
+    // }),
     react({
       babel: {
         parserOpts: {

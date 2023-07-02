@@ -14,6 +14,8 @@ import { CodeEditorPanel } from "../../pages/editor/codeEditorPanel";
 import { CodeEditorProps, StyleName } from "./codeEditorTypes";
 import { useClickCompNameEffect } from "./clickCompName";
 import { Layers } from "../../constants/Layers";
+import {Button, Input, Space} from "antd";
+import {OpenAiApi} from "../../api/openAiApi";
 
 type StyleConfig = {
   minHeight: string;
@@ -346,10 +348,40 @@ function CodeEditorCommon(
 ) {
   const { editor, children, disabled, cardStyle, onClick, ...editorProps } = props;
   const { view, isFocus } = useCodeMirror(editorProps, editor);
+  const [prompt,setPrompt] = useState('')
+  const [copilotIng,setCopilotIng] = useState(false)
+  const generateAISQL = async (query:string) => {
+    if(!query){
+      return
+    }
+    try {
+      setCopilotIng(true)
+      const res = await OpenAiApi.generateSQL({query})
+      props.onChange?.( EditorState.create({doc:res.data.text}))
+    }finally {
+      setCopilotIng(false)
+    }
+  }
   return (
     <CodeEditorWrapper onClick={onClick ? (e) => view && onClick(e, view) : undefined}>
       {!disabled && view && props.widgetPopup?.(view)}
       {children}
+      {
+        props.language === 'sql' && <div style={{marginTop:'16px',display:"flex"}}>
+              <Input
+                  size='small'
+                  placeholder='请输入提示语'
+                  allowClear
+                  value={prompt}
+                  onChange={e => setPrompt(e.target.value)}/>
+              <Button
+                  loading={copilotIng}
+                  size='small'
+                  type='primary'
+                  style={{marginLeft:'16px'}}
+                  onClick={() => {void generateAISQL(prompt)}}>Copilot</Button>
+          </div>
+      }
       <PopupCard
         cardStyle={cardStyle}
         editorFocus={!disabled && isFocus && canShowCard(props)}
