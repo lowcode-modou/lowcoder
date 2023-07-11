@@ -14,8 +14,8 @@ import { CodeEditorPanel } from "../../pages/editor/codeEditorPanel";
 import { CodeEditorProps, StyleName } from "./codeEditorTypes";
 import { useClickCompNameEffect } from "./clickCompName";
 import { Layers } from "../../constants/Layers";
-import {Button, Input, Space} from "antd";
-import {OpenAiApi} from "../../api/openAiApi";
+import { Button, Input, Space } from "antd";
+import { OpenAiApi } from "../../api/openAiApi";
 
 type StyleConfig = {
   minHeight: string;
@@ -65,7 +65,9 @@ export const CodeEditorTooltipContainer = styled.div`
   .cm-tooltip .cm-tooltip-lint {
     background-color: #2c2c2c;
     border-radius: 4px;
-    box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%),
+    box-shadow:
+      0 3px 6px -4px rgb(0 0 0 / 12%),
+      0 6px 16px 0 rgb(0 0 0 / 8%),
       0 9px 28px 8px rgb(0 0 0 / 5%);
     color: #ffffff;
     padding: 3px 0px;
@@ -202,27 +204,33 @@ export const CodeEditorTooltipContainer = styled.div`
 `;
 
 function getStyle(styleName?: StyleName) {
-  return styleName ? styles[styleName] : { minHeight: "auto", maxHeight: "180px" };
+  return styleName
+    ? styles[styleName]
+    : { minHeight: "auto", maxHeight: "180px" };
 }
 
 function useCodeMirror(
   props: CodeEditorProps,
-  container: MutableRefObject<HTMLDivElement | undefined>
+  container: MutableRefObject<HTMLDivElement | undefined>,
 ) {
   const { value, onChange } = props;
   const viewRef = useRef<EditorView>();
 
   // will not trigger view.setState when typing inputs, to avoid focus chaos
   const isTypingRef = useRef(0);
-  const showLineNum = props.showLineNum ?? getStyle(props.styleName).showLineNum;
+  const showLineNum =
+    props.showLineNum ?? getStyle(props.styleName).showLineNum;
 
   const handleChange = useCallback(
     (state: EditorState) => {
       window.clearTimeout(isTypingRef.current);
-      isTypingRef.current = window.setTimeout(() => (isTypingRef.current = 0), 100);
+      isTypingRef.current = window.setTimeout(
+        () => (isTypingRef.current = 0),
+        100,
+      );
       onChange?.(state);
     },
-    [onChange]
+    [onChange],
   );
 
   const { extensions, reconfigure, isFocus } = useExtensions({
@@ -238,7 +246,10 @@ function useCodeMirror(
      * 1. switch to the same type of comp
      * 2. change the current comp's value by dispatchChangeValueAction
      */
-    if (!view || (!isTypingRef.current && value !== view.state.doc.toString())) {
+    if (
+      !view ||
+      (!isTypingRef.current && value !== view.state.doc.toString())
+    ) {
       const state = EditorState.create({ doc: value, extensions });
       if (view) {
         view.setState(state);
@@ -248,7 +259,12 @@ function useCodeMirror(
     }
   }, [container, value, extensions]);
 
-  useClickCompNameEffect(viewRef.current, value, props.codeType, props.exposingData);
+  useClickCompNameEffect(
+    viewRef.current,
+    value,
+    props.codeType,
+    props.exposingData,
+  );
 
   useEffect(() => {
     return () => {
@@ -335,7 +351,9 @@ const CodeEditorWrapper = styled.div`
 `;
 
 function canShowCard(props: CodeEditorProps) {
-  return !props.disableCard && (props.codeType !== "Function" || props.hasError);
+  return (
+    !props.disableCard && (props.codeType !== "Function" || props.hasError)
+  );
 }
 
 function CodeEditorCommon(
@@ -344,44 +362,70 @@ function CodeEditorCommon(
     children: ReactNode;
     disabled?: boolean;
     cardStyle?: React.CSSProperties;
-  }
+  },
 ) {
-  const { editor, children, disabled, cardStyle, onClick, ...editorProps } = props;
+  const { editor, children, disabled, cardStyle, onClick, ...editorProps } =
+    props;
   const { view, isFocus } = useCodeMirror(editorProps, editor);
-  const [prompt,setPrompt] = useState('')
-  const [copilotIng,setCopilotIng] = useState(false)
-  const generateAISQL = async (query:string) => {
-    if(!query){
-      return
+  const [prompt, setPrompt] = useState("");
+  const [openAIApiKey, setOpenAIApiKey] = useState(
+    localStorage.getItem("OPEN_AI_API_KEY") ?? "",
+  );
+  useEffect(() => {
+    localStorage.setItem("OPEN_AI_API_KEY", openAIApiKey);
+  }, [openAIApiKey]);
+  const [copilotIng, setCopilotIng] = useState(false);
+  const generateAISQL = async (query: string) => {
+    if (!query || !openAIApiKey) {
+      return;
     }
     try {
-      setCopilotIng(true)
-      const res = await OpenAiApi.generateSQL({query})
-      props.onChange?.( EditorState.create({doc:res.data.text}))
-    }finally {
-      setCopilotIng(false)
+      setCopilotIng(true);
+      const res = await OpenAiApi.generateSQL({ query, openAIApiKey });
+      props.onChange?.(EditorState.create({ doc: res.data.text }));
+    } finally {
+      setCopilotIng(false);
     }
-  }
+  };
   return (
-    <CodeEditorWrapper onClick={onClick ? (e) => view && onClick(e, view) : undefined}>
+    <CodeEditorWrapper
+      onClick={onClick ? (e) => view && onClick(e, view) : undefined}
+    >
       {!disabled && view && props.widgetPopup?.(view)}
       {children}
-      {
-        props.language === 'sql' && <div style={{marginTop:'16px',display:"flex"}}>
-              <Input
-                  size='small'
-                  placeholder='请输入提示语'
-                  allowClear
-                  value={prompt}
-                  onChange={e => setPrompt(e.target.value)}/>
-              <Button
-                  loading={copilotIng}
-                  size='small'
-                  type='primary'
-                  style={{marginLeft:'16px'}}
-                  onClick={() => {void generateAISQL(prompt)}}>Copilot</Button>
+      {props.language === "sql" && (
+        <div>
+          <div style={{ marginTop: "16px", display: "flex" }}>
+            <Input
+              size="small"
+              placeholder="请输入提示语"
+              allowClear
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+            />
+            <Button
+              loading={copilotIng}
+              size="small"
+              type="primary"
+              style={{ marginLeft: "16px" }}
+              onClick={() => {
+                void generateAISQL(prompt);
+              }}
+            >
+              Copilot
+            </Button>
           </div>
-      }
+          <div>
+            <Input
+              size="small"
+              placeholder="请输入 openai api key"
+              allowClear
+              value={openAIApiKey}
+              onChange={(e) => setOpenAIApiKey(e.target.value)}
+            />
+          </div>
+        </div>
+      )}
       <PopupCard
         cardStyle={cardStyle}
         editorFocus={!disabled && isFocus && canShowCard(props)}
@@ -399,7 +443,11 @@ function CodeEditorCommon(
 function CodeEditorForPanel(props: CodeEditorProps) {
   const editor = useRef<HTMLDivElement>();
   return (
-    <CodeEditorCommon {...props} editor={editor} cardStyle={{ borderRadius: "8px" }}>
+    <CodeEditorCommon
+      {...props}
+      editor={editor}
+      cardStyle={{ borderRadius: "8px" }}
+    >
       <CodeEditorPanelContainer
         styleName={props.styleName}
         ref={editor as MutableRefObject<HTMLDivElement>}
@@ -429,7 +477,9 @@ export function CodeEditor(props: CodeEditorProps) {
         {expandable && (
           <CodeEditorPanel
             breadcrumb={[props.label ?? ""]}
-            editor={<CodeEditorForPanel {...props} styleName="window" showLineNum />}
+            editor={
+              <CodeEditorForPanel {...props} styleName="window" showLineNum />
+            }
             onVisibleChange={(visible) => setDisabled(visible)}
           />
         )}

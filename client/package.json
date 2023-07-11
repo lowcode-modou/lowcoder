@@ -10,7 +10,7 @@
     "node": "^14.18.0 || >=16.0.0"
   },
   "scripts": {
-    "start": " API_PROXY_TARGET=http://localhost:3000 yarn workspace lowcoder start",
+    "start": " API_PROXY_TARGET=http://192.168.31.46:3000 yarn workspace lowcoder start",
     "start:ee": "REACT_APP_EDITION=enterprise yarn workspace lowcoder start",
     "start:ee-global": "REACT_APP_EDITION=enterprise-global yarn workspace lowcoder start",
     "build": "yarn node ./scripts/build.js",
