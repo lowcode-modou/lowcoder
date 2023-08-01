@@ -1971,15 +1971,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google-cloud/firestore@npm:^6.5.0":
-  version: 6.6.0
-  resolution: "@google-cloud/firestore@npm:6.6.0"
+"@google-cloud/firestore@npm:^6.6.0":
+  version: 6.7.0
+  resolution: "@google-cloud/firestore@npm:6.7.0"
   dependencies:
     fast-deep-equal: ^3.1.1
     functional-red-black-tree: ^1.0.1
     google-gax: ^3.5.7
     protobufjs: ^7.0.0
-  checksum: a3f6e9998159fae81d1a78371dc5d0d2a5b6b4e8e685ed5bf7a5a66c7b4b36beef010c6d38a77131c76ca4cbf6b9be352ac0dd39a9a9d286e931e8c9eaa95456
+  checksum: 8464d4d866adcbd80cd528230408f7161a402df7b74d4036b2f81c1f9b83051057364e1c8264477b7a46ce03c2b8fa0d28799f6ccd77d905274a71ca93b2593f
   languageName: node
   linkType: hard
 
@@ -5196,14 +5196,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firebase-admin@npm:^11.5.0":
-  version: 11.8.0
-  resolution: "firebase-admin@npm:11.8.0"
+"firebase-admin@npm:^11.10.1":
+  version: 11.10.1
+  resolution: "firebase-admin@npm:11.10.1"
   dependencies:
     "@fastify/busboy": ^1.2.1
     "@firebase/database-compat": ^0.3.4
     "@firebase/database-types": ^0.10.4
-    "@google-cloud/firestore": ^6.5.0
+    "@google-cloud/firestore": ^6.6.0
     "@google-cloud/storage": ^6.9.5
     "@types/node": ">=12.12.47"
     jsonwebtoken: ^9.0.0
@@ -5215,7 +5215,7 @@ __metadata:
       optional: true
     "@google-cloud/storage":
       optional: true
-  checksum: e7f3596db58bf668702e2a6dfb74071ee112aef5ac3001071079a57fb5ce41aba5a1f398dfac40a40792ac6894e040c3b3cb508dc02d026741eada6672974048
+  checksum: e0ba6795be4064b0713c83d305894b79d1543d9129e4b531ee9f299020923b36b0c3ed7509ced9fe02ca5a65f030077eee9bcfa20c29919a0996ef7e7a5caeaa
   languageName: node
   linkType: hard
 
@@ -8971,7 +8971,7 @@ __metadata:
     dynamodb-data-types: ^4.0.1
     express: ^4.18.2
     express-async-errors: ^3.1.1
-    firebase-admin: ^11.5.0
+    firebase-admin: ^11.10.1
     formdata-node: 4
     graphql: ^16.6.0
     graphql-request: ^5.1.0
